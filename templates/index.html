@@ -1,0 +1,293 @@
+<!--
+
+/*
+ *
+ * Copyright 2015 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google+ JavaScript Quickstart</title>
+  <!-- JavaScript specific to this application that is not related to API
+     calls -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" ></script>
+    <meta name="google-signin-client_id" content="1019466846828-bm8otlkk1itb41n55lmn68bkor03f06u.apps.googleusercontent.com"></meta>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Barrio" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/collapse.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <link rel="stylesheet" href="./bootstrap-3.3.6/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/bootstrap-social.css"> 
+    <link rel="stylesheet" href="css/style.css"> 
+</head>
+<body>
+  <nav class="navbar navbar-default navigation">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand cursive" style="color:white" href="#">SimpleShop</a>
+          </div>
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right white-text">
+              <li><a href="#" style="color:white">Sign in</a></li>
+              </li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+    <div class = "container">
+      <div class = "col-md-8 text-center fancy-text" style="margin:0 16.16% 0 16.16%">
+          <h1>Create and share simple shopping lists</h1>
+          <h3>Add contents to your list easily from your app. Share it with your family so you can coordinate purchasing more efficiently</h3>
+          <img src="./files/shopping-list.png" class="img-responsive top-margin">
+          <div class = "button-container">
+            <div class = "flex-btn">
+              <form action="action_page.php">
+                <textarea name="message" rows="1" cols="30">Name</textarea>
+                <br>
+                <textarea name="message" rows="1" cols="30">Email</textarea>
+                <br>
+                <textarea name="message" rows="1" cols="30">Password</textarea>
+                <br>
+                <input type="submit">
+              </form>
+            </div>
+            
+  <div id="gConnect">
+    <div id="signin-button"></div>
+  </div>
+  <div id="authOps" style="display:none">
+    <h2>User is now signed in to the app using Google+</h2>
+    <button id="signOut" onclick="auth2.signOut()">Sign Out</button>
+    <p>If the user chooses to disconnect, the app must delete all stored
+    information retrieved from Google for the given user.</p>
+    <button id="disconnect" >Disconnect your Google account from this app</button>
+
+    <h2>User's profile information</h2>
+    <div id="profile"></div>
+
+    <h2>User's friends that are visible to this app</h2>
+    <div id="visiblePeople"></div>
+
+    <h2>Authentication Logs</h2>
+    <pre id="authResult"></pre>
+  </div>
+  <div id="loaderror">
+    This section will be hidden by jQuery. If you can see this message, you
+    may be viewing the file rather than running a web server.<br />
+    The sample must be run from http or https. See instructions at
+    <a href="https://developers.google.com/+/quickstart/javascript">
+    https://developers.google.com/+/quickstart/javascript</a>.
+  </div>
+<script type="text/javascript">
+var auth2 = {};
+var helper = (function() {
+  return {
+    /**
+     * Hides the sign in button and starts the post-authorization operations.
+     *
+     * @param {Object} authResult An Object which contains the access token and
+     *   other authentication information.
+     */
+    onSignInCallback: function(authResult) {
+      $('#authResult').html('Auth Result:<br/>');
+      for (var field in authResult) {
+        $('#authResult').append(' ' + field + ': ' +
+            authResult[field] + '<br/>');
+      }
+      if (authResult.isSignedIn.get()) {
+        $('#authOps').show('slow');
+        $('#gConnect').hide();
+        helper.profile();
+        helper.people();
+      } else {
+          if (authResult['error'] || authResult.currentUser.get().getAuthResponse() == null) {
+            // There was an error, which means the user is not signed in.
+            // As an example, you can handle by writing to the console:
+            console.log('There was an error: ' + authResult['error']);
+          }
+          $('#authResult').append('Logged out');
+          $('#authOps').hide('slow');
+          $('#gConnect').show();
+      }
+
+      console.log('authResult', authResult);
+    },
+
+    /**
+     * Calls the OAuth2 endpoint to disconnect the app for the user.
+     */
+    disconnect: function() {
+      // Revoke the access token.
+      auth2.disconnect();
+    },
+
+    /**
+     * Gets and renders the list of people visible to this app.
+     */
+    people: function() {
+      gapi.client.plus.people.list({
+        'userId': 'me',
+        'collection': 'visible'
+      }).then(function(res) {
+        var people = res.result;
+        $('#visiblePeople').empty();
+        $('#visiblePeople').append('Number of people visible to this app: ' +
+            people.totalItems + '<br/>');
+        for (var personIndex in people.items) {
+          person = people.items[personIndex];
+          $('#visiblePeople').append('<img src="' + person.image.url + '">');
+        }
+      });
+    },
+
+    /**
+     * Gets and renders the currently signed in user's profile data.
+     */
+    profile: function(){
+      gapi.client.plus.people.get({
+        'userId': 'me'
+      }).then(function(res) {
+        var profile = res.result;
+        console.log(profile);
+        $('#profile').empty();
+        $('#profile').append(
+            $('<p><img src=\"' + profile.image.url + '\"></p>'));
+        $('#profile').append(
+            $('<p>Hello ' + profile.displayName + '!<br />Tagline: ' +
+            profile.tagline + '<br />About: ' + profile.aboutMe + '</p>'));
+        if (profile.emails) {
+          $('#profile').append('<br/>Emails: ');
+          for (var i=0; i < profile.emails.length; i++){
+            $('#profile').append(profile.emails[i].value).append(' ');
+          }
+          $('#profile').append('<br/>');
+        }
+        if (profile.cover && profile.coverPhoto) {
+          $('#profile').append(
+              $('<p><img src=\"' + profile.cover.coverPhoto.url + '\"></p>'));
+        }
+      }, function(err) {
+        var error = err.result;
+        $('#profile').empty();
+        $('#profile').append(error.message);
+      });
+    }
+  };
+})();
+
+/**
+ * jQuery initialization
+ */
+$(document).ready(function() {
+  $('#disconnect').click(helper.disconnect);
+  $('#loaderror').hide();
+  if ($('meta')[0].content == 'YOUR_CLIENT_ID') {
+    alert('This sample requires your OAuth credentials (client ID) ' +
+        'from the Google APIs console:\n' +
+        '    https://code.google.com/apis/console/#:access\n\n' +
+        'Find and replace YOUR_CLIENT_ID with your client ID.'
+    );
+  }
+});
+
+/**
+ * Handler for when the sign-in state changes.
+ *
+ * @param {boolean} isSignedIn The new signed in state.
+ */
+var updateSignIn = function() {
+  console.log('update sign in state');
+  if (auth2.isSignedIn.get()) {
+    console.log('signed in');
+    helper.onSignInCallback(gapi.auth2.getAuthInstance());
+  }else{
+    console.log('signed out');
+    helper.onSignInCallback(gapi.auth2.getAuthInstance());
+  }
+}
+
+/**
+ * This method sets up the sign-in listener after the client library loads.
+ */
+function startApp() {
+  gapi.load('auth2', function() {
+    gapi.client.load('plus','v1').then(function() {
+      gapi.signin2.render('signin-button', {
+          scope: 'https://www.googleapis.com/auth/plus.login',
+          fetch_basic_profile: false });
+      gapi.auth2.init({fetch_basic_profile: false,
+          scope:'https://www.googleapis.com/auth/plus.login'}).then(
+            function (){
+              console.log('init');
+              auth2 = gapi.auth2.getAuthInstance();
+              auth2.isSignedIn.listen(updateSignIn);
+              auth2.then(updateSignIn);
+            });
+    });
+  });
+}
+</script>
+<!-- Facebook Signin -->
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '900422853393901',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();   
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+<fb:login-button 
+  scope="public_profile,email"
+  onlogin="checkLoginState();">
+</fb:login-button>
+<script>
+  
+function checkLoginState() {
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+}
+</script>
+<script src="https://apis.google.com/js/client:platform.js?onload=startApp"></script>
+</body>
+</html>

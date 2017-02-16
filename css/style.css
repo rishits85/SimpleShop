@@ -1,0 +1,39 @@
+
+.fancy-text{
+
+	font-family: 'Open Sans Condensed', sans-serif;
+	color: #444;
+	font-weight: 700;
+}
+
+.top-margin{
+	margin:10% auto;
+}
+
+.navigation{
+	background-color: #333;
+}
+
+.white-text>li>a{
+	color: white;
+	font-weight: bold;
+}
+
+.cursive{
+	font-family: 'Barrio', cursive;
+	color: white;
+}
+
+.button-container{
+	display: flex;
+}
+
+.flex-btn{
+	flex-shrink:1;
+	margin: 0 auto;
+}
+
+.login-btn{
+	max-width: 100%
+}
+

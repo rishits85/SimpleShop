@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Portfolio Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="1019466846828-bm8otlkk1itb41n55lmn68bkor03f06u.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Barrio" rel="stylesheet">
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/collapse.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <link rel="stylesheet" href="./bootstrap-3.3.6/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/bootstrap-social.css"> 
+    <link rel="stylesheet" href="css/style.css"> 
+  </head>
+  <body onload = myfunction()>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : 'your-app-id',
+          xfbml      : true,
+          version    : 'v2.8'
+        });
+        FB.AppEvents.logPageView();
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <div id="fb-root"></div>
+      <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8&appId=389411241247837";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));</script>
+
+    <nav class="navbar navbar-default navigation">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand cursive" style="color:white" href="#">SimpleShop</a>
+          </div>
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right white-text">
+              <li><a href="#" style="color:white">Sign in</a></li>
+              </li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+  	<div class = "container">
+      <div class = "col-md-8 text-center fancy-text" style="margin:0 16.16% 0 16.16%">
+          <h1>Create and share simple shopping lists</h1>
+          <h3>Add contents to your list easily from your app. Share it with your family so you can coordinate purchasing more efficiently</h3>
+          <img src="./files/shopping-list.png" class="img-responsive top-margin">
+          <div class = "button-container">
+            <div class = "flex-btn">
+              <form action="action_page.php">
+                <textarea name="message" rows="1" cols="30">Name</textarea>
+                <br>
+                <textarea name="message" rows="1" cols="30">Email</textarea>
+                <br>
+                <textarea name="message" rows="1" cols="30">Password</textarea>
+                <br>
+                <input type="submit">
+              </form>
+            </div>
+            <!-- Google sign in -->
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <script>
+                var auth2 = {};
+
+                function onSignIn(googleUser) {
+                  // Useful data for your client-side scripts:
+                  var profile = googleUser.getBasicProfile();
+                  console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+                  console.log('Full Name: ' + profile.getName());
+                  console.log('Given Name: ' + profile.getGivenName());
+                  console.log('Family Name: ' + profile.getFamilyName());
+                  console.log("Image URL: " + profile.getImageUrl());
+                  console.log("Email: " + profile.getEmail());
+
+                  // The ID token you need to pass to your backend:
+                  var id_token = googleUser.getAuthResponse().id_token;
+                  console.log("ID Token: " + id_token);
+                  if (authResult['code']) {
+                  // Hide the sign-in button now that the user is authorized
+                  $('#signinButton').attr('style', 'display: none');
+
+                  // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+                  $.ajax({
+                    type: 'POST',
+                    url: '/gconnect?state={{STATE}}',
+                    // type: 'GET',
+                    // url: 'https://www.google.com/'
+                    processData: false,
+                    data: authResult['code'],
+                    contentType: 'application/octet-stream; charset=utf-8',
+                    dataType: 'text',
+                    success: function(result) {
+                      // Handle or verify the server response if necessary.
+                      if (result) {
+                        $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+                       setTimeout(function() {
+                        window.location.href = "/restaurant";
+                       }, 4000);
+                        
+
+                    } else if (authResult['error']) {
+                  console.log('There was an error: ' + authResult['error']);
+                } else {
+                      $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                       }
+
+                    }
+                    
+                }); }
+                };
+            </script>
+            <!--END GOOGLE PLUS SIGN IN -->
+
+            <!--FACEBOOK SIGN IN -->
+            <script>   
+
+                //get the login status of the user into our app
+                FB.getLoginStatus(function(response) {
+                    //the callback that defines what is done on callback
+                    statusChangeCallback(response);
+                });
+                
+                // Status Respose from funciton above
+                // {
+                //     status: 'connected',
+                //     authResponse: {
+                //         accessToken: '...',
+                //         expiresIn:'...',
+                //         signedRequest:'...',
+                //         userID:'...'
+                //     }
+                // }
+
+                window.fbAsyncInit = function() {
+                FB.init({
+                  appId      : '900422853393901',
+                  cookie     : true,
+                  xfbml      : true,
+                  version    : 'v2.8'
+                });
+                FB.AppEvents.logPageView();   
+              };
+
+              (function(d, s, id){
+                 var js, fjs = d.getElementsByTagName(s)[0];
+                 if (d.getElementById(id)) {return;}
+                 js = d.createElement(s); js.id = id;
+                 js.src = "//connect.facebook.net/en_US/sdk.js";
+                 fjs.parentNode.insertBefore(js, fjs);
+               }(document, 'script', 'facebook-jssdk'));
+            </script>                    
+            <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+            <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+
+            </fb:login-button>
+            <!--END FACEBOOK SIGN IN -->
+            <!-- <div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="false"></div>
+            </div>  -->
+          </div>
+          </div>
+      </div>
+    </div>
+    <script src="https://apis.google.com/js/client:platform.js?onload=startApp"></script>
+  </body>
+</html>
